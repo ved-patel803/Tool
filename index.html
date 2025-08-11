@@ -691,7 +691,19 @@ compressBtn.addEventListener('click', async function () {
                 height = maxSize;
             }
         }
+        const fileInput = document.getElementById('fileInput');
+const compressBtn = document.getElementById('compressBtn');
+const qualitySlider = document.getElementById('qualitySlider');
+const sizeSlider = document.getElementById('sizeSlider');
+const resultsContainer = document.getElementById('resultsContainer');
+const resultsSection = document.getElementById('resultsSection');
 
+// ...rest of your compression JS...
+
+fileInput.addEventListener('change', function () {
+    handleFiles(this.files);
+});
+        <script>
         // Create canvas
         const canvas = document.createElement('canvas');
         canvas.width = width;
@@ -741,6 +753,6 @@ compressBtn.addEventListener('click', async function () {
     document.getElementById('loadingSpinner').style.display = 'none';
     compressBtn.disabled = false;
 });
-  <\script>
+    </script>
 </body>
 </html>
