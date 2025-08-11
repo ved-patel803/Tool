@@ -639,6 +639,108 @@
                 // Here you would filter tools based on category
             });
         });
-    </script>
+
+    // Store selected files globally for compression
+let selectedFiles = [];
+
+// Update handleFiles to store files
+function handleFiles(files) {
+    if (files && files.length > 0) {
+        compressBtn.disabled = false;
+        selectedFiles = Array.from(files); // Store for compression
+        // Example: preview the first image
+        const file = files[0];
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'image-preview';
+        resultsContainer.innerHTML = '';
+        resultsContainer.appendChild(img);
+        resultsSection.style.display = 'block';
+    }
+}
+
+// Compression logic
+compressBtn.addEventListener('click', async function () {
+    if (selectedFiles.length === 0) return;
+    compressBtn.disabled = true;
+    document.getElementById('loadingSpinner').style.display = 'block';
+    resultsContainer.innerHTML = '';
+
+    // Get user settings
+    const quality = parseInt(qualitySlider.value) / 100;
+    const maxSize = parseInt(sizeSlider.value);
+    const format = document.querySelector('input[name="outputFormat"]:checked').value;
+    const keepMetadata = document.getElementById('keepMetadata').checked;
+
+    for (let file of selectedFiles) {
+        // Load image into canvas
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await img.decode();
+
+        let width = img.width;
+        let height = img.height;
+
+        // Resize if needed
+        if (maxSize > 0 && (width > maxSize || height > maxSize)) {
+            if (width > height) {
+                height = Math.round(height * (maxSize / width));
+                width = maxSize;
+            } else {
+                width = Math.round(width * (maxSize / height));
+                height = maxSize;
+            }
+        }
+
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Determine output format
+        let mimeType = file.type;
+        if (format === 'jpg') mimeType = 'image/jpeg';
+        else if (format === 'png') mimeType = 'image/png';
+        else if (format === 'webp') mimeType = 'image/webp';
+        // else 'original' uses original mime type
+
+        // Compress via canvas
+        canvas.toBlob(function(blob) {
+            // Show results
+            const resultBox = document.createElement('div');
+            resultBox.className = 'image-box';
+
+            // Preview compressed
+            const preview = document.createElement('img');
+            preview.className = 'image-preview';
+            preview.src = URL.createObjectURL(blob);
+            resultBox.appendChild(preview);
+
+            // Stats
+            const stats = document.createElement('div');
+            stats.className = 'stats';
+            stats.innerHTML =
+                `<span>Original: ${(file.size/1024).toFixed(2)} KB</span>
+                 <span>Compressed: ${(blob.size/1024).toFixed(2)} KB</span>`;
+            resultBox.appendChild(stats);
+
+            // Download link
+            const download = document.createElement('a');
+            download.href = URL.createObjectURL(blob);
+            download.download = `compressed.${format === 'original' ? file.name.split('.').pop() : format}`;
+            download.className = 'tool-btn download-btn btn-primary';
+            download.textContent = 'Download';
+            resultBox.appendChild(download);
+
+            resultsContainer.appendChild(resultBox);
+        }, mimeType, mimeType === 'image/jpeg' || mimeType === 'image/webp' ? quality : undefined);
+    }
+
+    document.getElementById('loadingSpinner').style.display = 'none';
+    compressBtn.disabled = false;
+});
+  <\script>
 </body>
 </html>
