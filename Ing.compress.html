@@ -683,4 +683,77 @@
             compressBtn.disabled = true;
             resultsSection.style.display = 'none';
         });
-    </script>
+// Set current year in footer
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+// DOM elements
+const fileInput = document.getElementById('fileInput');
+const uploadArea = document.getElementById('uploadArea');
+const compressBtn = document.getElementById('compressBtn');
+const resetBtn = document.getElementById('resetBtn');
+const resultsSection = document.getElementById('resultsSection');
+const resultsContainer = document.getElementById('resultsContainer');
+const qualitySlider = document.getElementById('qualitySlider');
+const qualityValue = document.getElementById('qualityValue');
+const sizeSlider = document.getElementById('sizeSlider');
+const sizeValue = document.getElementById('sizeValue');
+
+// Update quality and size value display
+qualitySlider.addEventListener('input', function() {
+    qualityValue.textContent = this.value;
+});
+sizeSlider.addEventListener('input', function() {
+    sizeValue.textContent = this.value === '0' ? 'Original' : this.value + 'px';
+});
+
+// File handling function (for both input and drag & drop)
+function handleFiles(files) {
+    if (files && files.length > 0) {
+        compressBtn.disabled = false;
+        // Example: preview the first image
+        const file = files[0];
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'image-preview';
+        resultsContainer.innerHTML = '';
+        resultsContainer.appendChild(img);
+        resultsSection.style.display = 'block';
+        // You can store files in a variable if needed for compression
+        // window.selectedFiles = files; // Optional: store for later use
+    }
+}
+
+// Drag & Drop events
+['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.add('active');
+    });
+});
+['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.remove('active');
+    });
+});
+uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    let files = e.dataTransfer.files;
+    handleFiles(files);
+});
+
+// File input change
+fileInput.addEventListener('change', function() {
+    handleFiles(this.files);
+});
+
+// Reset button logic
+resetBtn.addEventListener('click', function() {
+    fileInput.value = '';
+    compressBtn.disabled = true;
+    resultsSection.style.display = 'none';
+    resultsContainer.innerHTML = '';
+});
