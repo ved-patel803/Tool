@@ -588,33 +588,6 @@
             <p>&copy; <span id="currentYear"></span> ImageCompressorPro. All rights reserved.</p>
         </div>
     </footer>
-    
-    <script>
-        // Set current year in footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-        
-        // DOM elements
-        const fileInput = document.getElementById('fileInput');
-        const uploadArea = document.getElementById('uploadArea');
-        const qualitySlider = document.getElementById('qualitySlider');
-        const qualityValue = document.getElementById('qualityValue');
-        const sizeSlider = document.getElementById('sizeSlider');
-        const sizeValue = document.getElementById('sizeValue');
-        const compressBtn = document.getElementById('compressBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const resultsSection = document.getElementById('resultsSection');
-        const resultsContainer = document.getElementById('resultsContainer');
-        
-        // Update quality value display
-        qualitySlider.addEventListener('input', function() {
-            qualityValue.textContent = this.value;
-        });
-        
-        // Update size value display
-        sizeSlider.addEventListener('input', function() {
-            sizeValue.textContent = this.value === '0' ? 'Original' : this.value + 'px';
-        });
         
              <script>
         // Set current year in footer
